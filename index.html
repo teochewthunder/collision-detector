@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Collision Detection Utility</title>
+
+		<style>
+			div { outline: 0px solid red;}
+
+			#cdApp
+			{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			.dashboard
+			{
+				position: relative;
+				width: 100%;
+				height: 25%;
+			}
+
+			.notice
+			{
+				position: relative;
+				width: 100%;
+				height: 5%;
+				text-align: center;
+			}
+
+			.space
+			{
+				position: relative;
+				width: 100%;
+				height: 70%;
+			}
+
+			.obj
+			{
+				position: absolute;
+			}
+
+			.objA
+			{
+				outline: 1px solid blue;
+			}
+
+			.objB
+			{
+				outline: 1px solid green;
+			}
+
+			fieldset
+			{
+				width: 20em;
+				height: 10em;
+				float: left;
+				display: block;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="cdApp">
+			<div class="dashboard">
+				<fieldset>
+					<legend>Obj A</legend>
+					<br /><label>Obj A Left</label><input type="range" min="0" max="300" value="10" step="1" v-model="objA.left" v-on:change="detectCollision"> {{ objA.left }}
+					<br /><label>Obj A Top</label><input type="range" min="0" max="300" value="10" step="1" v-model="objA.top" v-on:change="detectCollision"> {{ objA.top }}
+					<br /><label>Obj A Width</label><input type="range" min="0" max="300" value="100" step="1" v-model="objA.width" v-on:change="detectCollision"> {{ objA.width }}
+					<br /><label>Obj A Height</label><input type="range" min="0" max="300" value="100" step="1" v-model="objA.height" v-on:change="detectCollision"> {{ objA.height }}
+				</fieldset>
+
+				<fieldset>
+					<legend>Obj B</legend>
+					<br /><label>Obj B Left</label><input type="range" min="0" max="300" value="50" step="1" v-model="objB.left" v-on:change="detectCollision"> {{ objB.left }}
+					<br /><label>Obj B Top</label><input type="range" min="0" max="300" value="50" step="1" v-model="objB.top" v-on:change="detectCollision"> {{ objB.top }}
+					<br /><label>Obj B Width</label><input type="range" min="0" max="300" value="300" step="1" v-model="objB.width" v-on:change="detectCollision"> {{ objB.width }}
+					<br /><label>Obj B Height</label><input type="range" min="0" max="300" value="300" step="1" v-model="objB.height" v-on:change="detectCollision"> {{ objB.height }}
+				</fieldset>
+			</div>
+
+			<div class="notice">
+				H: {{ getCollision('h') }} | 
+				V: {{ getCollision('v') }} | 
+				Collision: {{ getCollision('collision') }} 
+			</div>
+
+			<div class="space">
+				<div class="obj objA" style="left: {{ objA.left }}px; top: {{ objA.top }}px; width: {{ objA.width }}px; height: {{ objA.height }}px;"></div>
+				<div class="obj objB" style="left: {{ objB.left }}px; top: {{ objB.top }}px; width: {{ objB.width }}px; height: {{ objB.height }}px;"></div>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+
+		<script>
+			var app = new Vue
+			(
+				{
+					el: "#cdApp",
+					data:
+					{
+						v: false,
+						h: false,
+						collision: false,
+						objA: { left: 10, top: 10, width: 100, height: 100},
+						objB: { left: 50, top: 50, width: 300, height: 300}
+					},
+					methods:
+					{
+						getCollision: function(prop) {
+							if (this[prop]) return "Yes";
+							return "No";
+						},
+						detectCollision: function() {
+							var collided = false;
+							var h = false;
+							var v = false;
+
+							if (this.objA.left >= this.objB.left && this.objA.left <= this.objB.left + this.objB.width)  h = true;
+							if (this.objA.left <= this.objB.left && this.objA.left + this.objA.width >= this.objB.left) h = true;
+
+							if (this.objA.top >= this.objB.top && this.objA.top <= this.objB.top + this.objB.height) v = true;
+							if (this.objA.top <= this.objB.top && this.objA.top + this.objA.height >= this.objB.top) v = true;
+
+							if (h && v) collided = true;
+
+							this.h = h;
+							this.v = v;
+							this.collision = collided;
+						},
+					},
+					created: function()
+					{
+						this.detectCollision();
+					}
+				}
+			);
+		</script>
+	</body>
+</html>
